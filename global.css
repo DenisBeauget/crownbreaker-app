@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn-primary {
+  @apply bg-primary text-white px-6 py-3 rounded-lg font-medium shadow-sm;
+}
+
+.btn-primary:active {
+  @apply bg-primary-dark;
+}
+
+.btn-secondary {
+  @apply bg-secondary text-white px-6 py-3 rounded-lg font-medium;
+}
+
+.btn-outline {
+  @apply border-2 border-primary text-primary px-6 py-3 rounded-lg font-medium;
+}
+
+.btn-outline:active {
+  @apply bg-primary text-white;
+}
+
+/* Cards */
+.card {
+  @apply bg-white rounded-xl shadow-sm p-4 border border-neutral-light;
+}
+
+.card-elevated {
+  @apply bg-white rounded-xl shadow-lg p-6 border border-neutral-light;
+}
+
+.text-title {
+  @apply text-4xl font-bold text-neutral-light mb-2;
+}
+
+.text-subtitle {
+  @apply text-2xl font-bold text-neutral-light mb-2;
+}
+
+.text-heading {
+  @apply text-2xl font-bold text-neutral-darkest mb-2;
+}
+
+.text-subheading {
+  @apply text-lg font-semibold text-neutral-dark mb-1;
+}
+
+.text-body {
+  @apply text-base text-neutral-dark leading-relaxed;
+}
+
+.text-caption {
+  @apply text-sm text-neutral-dark;
+}
+
+.text-primary-brand {
+  @apply text-primary font-medium;
+}
+
+.text-secondary-brand {
+  @apply text-secondary font-medium;
+}
+
+.container-main {
+  @apply flex-1 bg-neutral-light px-4 py-2;
+}
+
+.container-section {
+  @apply bg-white rounded-xl p-4 mb-4 shadow-sm;
+}
+
+.input-field {
+  @apply border border-neutral-dark rounded-lg px-3 py-3 bg-white text-neutral-darkest;
+}
+
+.input-field:focus {
+  @apply border-primary;
+}
+
+.badge-primary {
+  @apply bg-primary text-white px-3 py-1 rounded-full text-sm font-medium;
+}
+
+.badge-secondary {
+  @apply bg-secondary text-white px-3 py-1 rounded-full text-sm font-medium;
+}
+
+.alert-info {
+  @apply bg-secondary-light border-l-4 border-secondary p-3 rounded;
+}
+
+.alert-warning {
+  @apply bg-primary-light border-l-4 border-primary p-3 rounded;
+}
