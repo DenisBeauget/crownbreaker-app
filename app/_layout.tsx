@@ -1,21 +1,27 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useState } from "react";
+import React, { useState } from "react";
 import { useColorScheme } from "react-native";
 import 'react-native-reanimated';
 import WelcomeScreen from './auth';
+
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    const handleLoginSuccess = (token: string, user: any) => {
+    setIsAuthenticated(true);
+    setTimeout(() => {
+      router.replace("/(tabs)");
+    }, 100);
+  };
 
-   if (!isAuthenticated) {
+
+ if (!isAuthenticated) {
     return (
-      <WelcomeScreen
-        onLoginSuccess={() => setIsAuthenticated(true)}
-      />
+      <WelcomeScreen onLoginSuccess={handleLoginSuccess} />
     );
   }
 
