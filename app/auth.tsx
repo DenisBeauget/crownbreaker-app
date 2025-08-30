@@ -34,7 +34,7 @@ const useStravaAuth = (onLoginSuccess: (token: string, user: any) => void) => {
           setIsAuthenticating(false);
           const user = userStr ? JSON.parse(decodeURIComponent(userStr)) : null;
           AsyncStorage.setItem('authToken', token);
-          Alert.alert('Success', 'Successfully authenticated with Strava!');
+          AsyncStorage.setItem('user', JSON.stringify(user));
           onLoginSuccess(token, user);
         }
       } catch (err) {
