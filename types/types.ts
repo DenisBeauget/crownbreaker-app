@@ -32,7 +32,7 @@ export interface StravaSegmentDetails extends StravaSegment {
 }
 
 export interface OptimizedRouteRequest {
-  segmentIds: string[];
+  segmentIds: number[];
   startPoint: {
     latitude: number;
     longitude: number;

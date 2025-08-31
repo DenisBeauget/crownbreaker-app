@@ -1,6 +1,5 @@
 import { default as komOptimizer } from "@/api/komOptimizer";
 import "@/global.css";
-import { useSegments } from "@/hooks/useSegments";
 import { decodePolyline } from '@/utils/polyline';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -9,9 +8,10 @@ import { useRouter } from 'expo-router';
 import React, { useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
+import { useSegmentsContext } from "../contexts/SegmentsContext";
 
 export default function Index() {
- const { segments, loading, error, refetch } = useSegments();
+  const { segments, loading, error, refetch } = useSegmentsContext();
   const [selectedSegmentId, setSelectedSegmentId] = useState<number | null>(null);
   const [loadingSegment, setLoadingSegment] = useState(false);
   const [segmentDetails, setSegmentDetails] = useState<any>(null);

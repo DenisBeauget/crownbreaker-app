@@ -5,6 +5,8 @@ import React, { useState } from "react";
 import { useColorScheme } from "react-native";
 import 'react-native-reanimated';
 import WelcomeScreen from './auth';
+import { SegmentsProvider } from './contexts/SegmentsContext';
+
 
 
 export default function RootLayout() {
@@ -28,12 +30,14 @@ export default function RootLayout() {
 
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <SegmentsProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </SegmentsProvider>
   );
 }
