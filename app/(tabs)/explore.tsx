@@ -1,5 +1,8 @@
+import { GeneratedRoute, RouteApiService } from "@/api/route";
 import "@/global.css";
 import { StravaSegment } from "@/types/types";
+import RouteConfigurationScreen from "@/utils/routeConfigScreen";
+import RoutePreviewScreen from "@/utils/routePreviewScreen";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -9,7 +12,12 @@ export default function Index() {
   const { segments, loading, error, refetch } = useSegmentsContext();
   const [refreshing, setRefreshing] = useState(false);
   const [selectedSegments, setSelectedSegments] = useState<Set<number>>(new Set());
-
+  
+  // États pour les modals
+  const [showRouteConfig, setShowRouteConfig] = useState(false);
+  const [showRoutePreview, setShowRoutePreview] = useState(false);
+  const [generatedRoute, setGeneratedRoute] = useState<GeneratedRoute | null>(null);
+  const [routeLoading, setRouteLoading] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -24,35 +32,54 @@ export default function Index() {
     );
   };
 
- const toggleSegment = (segmentId: number) => {
-  setSelectedSegments(prev => {
-    const newSet = new Set(prev);
-    if (newSet.has(segmentId)) {
-      newSet.delete(segmentId);
-    } else {
-      newSet.add(segmentId);
-    }
-    return newSet;
-  });
-};
-
+  const toggleSegment = (segmentId: number) => {
+    setSelectedSegments(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(segmentId)) {
+        newSet.delete(segmentId);
+      } else {
+        newSet.add(segmentId);
+      }
+      return newSet;
+    });
+  };
 
   const createOptimizedRoute = () => {
-  const selectedArray = segments.filter(s => selectedSegments.has(s.id));
-  if (selectedArray.length === 0) {
-    Alert.alert("No selected segment", "Veuillez cocher au moins un segment.");
-    return;
-  }
+    const selectedArray = segments.filter(s => selectedSegments.has(s.id));
+    if (selectedArray.length === 0) {
+      Alert.alert("No selected segment", "Veuillez cocher au moins un segment.");
+      return;
+    }
 
-  Alert.alert(
-    "Créer une route", 
-    `Créer une route optimisée avec ${selectedArray.length} segments :\n${selectedArray.map(s => s.name).join(", ")}`,
-    [
-      { text: "Annuler", style: "cancel" },
-      { text: "Créer", onPress: () => console.log("Segments sélectionnés:", selectedArray) }
-    ]
-  );
-};
+    // Ouvrir le modal de configuration
+    setShowRouteConfig(true);
+  };
+
+  const handleGenerateRoute = async (config: any) => {
+    const selectedArray = segments.filter(s => selectedSegments.has(s.id));
+    
+    setRouteLoading(true);
+    
+    try {
+
+      const result = await RouteApiService.generateRoute(config, selectedArray);
+      
+
+      setShowRouteConfig(false);
+      setGeneratedRoute(result);
+      setShowRoutePreview(true);
+      
+    } catch (error) {
+      console.error("Erreur génération route:", error);
+      Alert.alert(
+        "Erreur", 
+        error instanceof Error ? error.message : "Impossible de générer la route"
+      );
+    } finally {
+      setRouteLoading(false);
+    }
+  };
+
   if (loading && segments.length === 0) {
     return (
       <View className="container-main">
@@ -100,8 +127,6 @@ export default function Index() {
             {segments.length} segment{segments.length > 1 ? 's' : ''}
           </Text>
         </View>
-
-      
         
         <ScrollView 
           className="flex-1" 
@@ -116,42 +141,41 @@ export default function Index() {
           }
         >
           {segments.map((segment, index) => (
-              <TouchableOpacity 
-                key={segment.id}
-                className="card mb-3 border-l-4 border-primary"
-                onPress={() => showSegmentDetails(segment, index)}
-              >
-                <View className="flex-row items-center justify-between mb-2">
-                  <Text className="text-subheading flex-1 mr-2">
-                    {index + 1}. {segment.name}
-                  </Text>
+            <TouchableOpacity 
+              key={segment.id}
+              className="card mb-3 border-l-4 border-primary"
+              onPress={() => showSegmentDetails(segment, index)}
+            >
+              <View className="flex-row items-center justify-between mb-2">
+                <Text className="text-subheading flex-1 mr-2">
+                  {index + 1}. {segment.name}
+                </Text>
 
-                  {/* Checkbox */}
-                  <TouchableOpacity 
-                    onPress={() => toggleSegment(segment.id)}
-                    className="flex-row items-center py-3"
-                    activeOpacity={0.7}
+                {/* Checkbox */}
+                <TouchableOpacity 
+                  onPress={() => toggleSegment(segment.id)}
+                  className="flex-row items-center py-3"
+                  activeOpacity={0.7}
+                >
+                  <View 
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderWidth: 2,
+                      borderColor: selectedSegments.has(segment.id) ? '#ef5717' : '#ccc',
+                      backgroundColor: selectedSegments.has(segment.id) ? '#ef5717' : 'transparent',
+                      borderRadius: 4,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: 12
+                    }}
                   >
-                    <View 
-                      style={{
-                        width: 24,
-                        height: 24,
-                        borderWidth: 2,
-                        borderColor: selectedSegments.has(segment.id) ? '#ef5717' : '#ccc',
-                        backgroundColor: selectedSegments.has(segment.id) ? '#ef5717' : 'transparent',
-                        borderRadius: 4,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginRight: 12
-                      }}
-                    >
-                      {selectedSegments.has(segment.id) && (
-                        <Ionicons name="checkmark" size={16} color="white" />
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                </View>
-            
+                    {selectedSegments.has(segment.id) && (
+                      <Ionicons name="checkmark" size={16} color="white" />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              </View>
               
               {/* Stats du segment */}
               <View className="flex-row justify-between mb-2">
@@ -191,8 +215,8 @@ export default function Index() {
       <View className="mt-4">
         <TouchableOpacity 
           className={`py-4 rounded-lg flex-row items-center justify-center ${
-      selectedSegments.size === 0 ? 'btn-primary-disabled' : 'btn-primary'
-    }`}
+            selectedSegments.size === 0 ? 'btn-primary-disabled' : 'btn-primary'
+          }`}
           onPress={createOptimizedRoute}
           disabled={selectedSegments.size === 0}
         >
@@ -201,6 +225,25 @@ export default function Index() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Route Configuration Modal */}
+      <RouteConfigurationScreen
+        visible={showRouteConfig}
+        selectedSegments={segments.filter(s => selectedSegments.has(s.id))}
+        onClose={() => setShowRouteConfig(false)}
+        onGenerateRoute={handleGenerateRoute}
+        loading={routeLoading}
+      />
+
+      {/* Route Preview Modal */}
+      <RoutePreviewScreen
+        visible={showRoutePreview}
+        route={generatedRoute}
+        onClose={() => {
+          setShowRoutePreview(false);
+          setGeneratedRoute(null);
+        }}
+      />
     </View>
   );
 }

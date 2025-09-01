@@ -6,6 +6,10 @@
   @apply bg-primary text-white px-6 py-3 rounded-lg font-medium shadow-sm;
 }
 
+.btn-primary-disabled {
+  @apply bg-gray-500 text-white px-6 py-3 rounded-lg font-medium shadow-sm;
+}
+
 .btn-primary:active {
   @apply bg-primary-dark;
 }
