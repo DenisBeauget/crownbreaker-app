@@ -1,22 +1,17 @@
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { makeRedirectUri } from "expo-auth-session";
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import { openAuthSessionAsync } from 'expo-web-browser';
 import React, { useEffect } from 'react';
 import { Alert, Linking, Text, TouchableOpacity, View } from 'react-native';
-
-
+import { useAuth } from './contexts/AuthContext';
 
 const API_BASE_URL = "https://kom-optimizer-production.up.railway.app";
 
-
-interface WelcomeScreenProps {
-  onLoginSuccess: (token: string, user: any) => void;
-}
-
-const useStravaAuth = (onLoginSuccess: (token: string, user: any) => void) => {
+const useStravaAuth = () => {
   const [isAuthenticating, setIsAuthenticating] = React.useState(false);
+  const { login } = useAuth();
 
   useEffect(() => {
     const handleDeepLink = (url: string) => {
@@ -33,9 +28,8 @@ const useStravaAuth = (onLoginSuccess: (token: string, user: any) => void) => {
         } else if (success === 'true' && token) {
           setIsAuthenticating(false);
           const user = userStr ? JSON.parse(decodeURIComponent(userStr)) : null;
-          AsyncStorage.setItem('authToken', token);
-          AsyncStorage.setItem('user', JSON.stringify(user));
-          onLoginSuccess(token, user);
+          login(token, user);
+          router.replace("/(tabs)");
         }
       } catch (err) {
         console.error('Error parsing deep link:', err);
@@ -53,7 +47,7 @@ const useStravaAuth = (onLoginSuccess: (token: string, user: any) => void) => {
     });
 
     return () => subscription?.remove();
-  }, [onLoginSuccess]);
+  }, [login]);
 
 const STRAVA_AUTH_URL = `${API_BASE_URL}/api/auth/strava/mobile-auth-url`;
 
@@ -98,8 +92,8 @@ async function authenticateWithStrava() {
   };
 };
 
-const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLoginSuccess }) => {
-  const { isAuthenticating, authenticateWithStrava } = useStravaAuth(onLoginSuccess);
+const AuthScreen: React.FC = () => {
+  const { isAuthenticating, authenticateWithStrava } = useStravaAuth();
 
   const handleStravaLogin = async () => {
     console.log("Bouton Strava cliqué");
@@ -141,4 +135,4 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onLoginSuccess }) => {
   );
 };
 
-export default WelcomeScreen;
+export default AuthScreen;

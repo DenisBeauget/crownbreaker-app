@@ -1,3 +1,4 @@
+import { RouteApiService } from "@/api/route";
 import "@/global.css";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
@@ -70,9 +71,14 @@ export default function RoutePreviewScreen({
         "Feature temporarily disabled. Installing dependencies..."
       );
 
-      /* const gpxContent = await RouteApiService.exportRoute(route.routeId, 'gpx');
+      const gpxContent = await RouteApiService.exportRoute(route.routeId, 'gpx');
+
+        await Share.share({
+        message: gpxContent,
+        title: `route_${route.routeId}.gpx`,
+      });
       
-      const fileName = `route_${route.routeId}.gpx`;
+      /*const fileName = `route_${route.routeId}.gpx`;
       const fileUri = `${FileSystem.documentDirectory}${fileName}`;
       
       await FileSystem.writeAsStringAsync(fileUri, gpxContent);
