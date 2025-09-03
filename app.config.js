@@ -3,6 +3,11 @@ import "dotenv/config";
 export default {
   expo: {
     name: "CrownBreaker",
+    "extra": {
+      "eas": {
+        "projectId": "db23a1ea-988d-4dd5-8aa0-a26f5350cf34"
+      }
+    },
     slug: "CrownBreaker",
     version: "1.0.0",
     orientation: "portrait",
@@ -39,6 +44,10 @@ export default {
       favicon: "./assets/images/favicon.png",
     },
 
+    updates: {
+      enabled: true,
+      fallbackToCacheTimeout: 0
+    },
     plugins: [
       "expo-router",
       [
@@ -50,6 +59,13 @@ export default {
           backgroundColor: "#ffffff",
         },
       ],
+      [
+        "expo-location",
+        {
+          locationAlwaysAndWhenInUsePermission: "Allow CrownBreaker to access your location for mapping segments and routes.",
+          locationWhenInUsePermission: "Allow CrownBreaker to access your location for mapping segments and routes."
+        }
+      ]
     ],
 
     experiments: {
