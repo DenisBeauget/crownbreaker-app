@@ -163,9 +163,17 @@ export class RouteApiService {
 
   static async exportRoute(routeId: string, format: 'gpx' | 'json' | 'tcx' = 'gpx'): Promise<string> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/route/${routeId}/export/${format}`, {
+
+      const token = await this.getAccessTokenFromStorage();
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+
+
+      const response = await fetch(`${API_BASE_URL}/route/${routeId}/export/${format}`, {
         headers: {
-          'Authorization': `Bearer ${this.getAuthToken()}`
+          'Authorization': `Bearer ${token}`
         }
       });
 

@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 .btn-primary {
-  @apply bg-primary text-white px-6 py-3 rounded-lg font-medium shadow-sm;
+  @apply bg-primary text-white px-6 py-4 rounded-lg font-medium shadow-sm;
 }
 
 .btn-primary-disabled {
-  @apply bg-gray-500 text-white px-6 py-3 rounded-lg font-medium shadow-sm;
+  @apply bg-gray-500 text-white px-6 py-4 rounded-lg font-medium shadow-sm;
 }
 
 .btn-primary:active {
@@ -57,6 +57,10 @@
 
 .text-caption {
   @apply text-sm text-neutral-dark;
+}
+
+.text-caption-big {
+  @apply text-2xl text-neutral-dark;
 }
 
 .text-primary-brand {

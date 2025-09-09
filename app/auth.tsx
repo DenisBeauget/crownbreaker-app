@@ -69,13 +69,9 @@ async function authenticateWithStrava() {
     const result = await openAuthSessionAsync(authUrl, redirectUri);
 
     if (result.type === "success" && result.url) {
-      console.log("Redirect URL:", result.url);
 
-      const params = new URLSearchParams(result.url.split("?")[1]);
-      const token = params.get("token");
-      const user = JSON.parse(params.get("user") || "{}");
+      console.log('Successfully log in');
 
-      console.log("JWT:", token, "User:", user);
     } else {
       console.log("Auth cancelled or error:", result);
     }

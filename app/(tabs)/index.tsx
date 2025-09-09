@@ -1,7 +1,6 @@
 import { default as komOptimizer } from "@/api/komOptimizer";
 import "@/global.css";
 import { decodePolyline } from '@/utils/polyline';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
@@ -98,15 +97,14 @@ export default function Index() {
             }
           >
             {/* Header principal */}
-            <View className="mb-2">
-              <Text className="text-heading mb-2">Your Starred Segments</Text>
-              <Text className="text-caption text-center">
+            <View className="mb-4">
+              <Text className="text-caption-big text-center"  style={{ textAlign: 'center', width: '100%', marginBottom: 10}}>
                 Discover all your favorite challenges
               </Text>
             </View>
 
             {/* Stats cards en ligne */}
-            <View className="flex-row mb-1 mt-4 gap-5 px-1">
+            <View className="flex-row gap-5 px-1">
               <View className="card-elevated flex-1 items-center justify-center mr-3">
                 <MaterialIcons name="numbers" size={24} color="#e3360b" />
                 <Text className="text-subheading text-center text-primary">
@@ -138,16 +136,14 @@ export default function Index() {
           </ScrollView>
           
           {/* Google Maps - Section fixe */}
-          <View className="mb-4">
-            <View className="flex-row items-center mb-4 px-4">
-              <FontAwesome name="map-signs" size={18} color="black" className="mr-3 ml-3" />
-              <Text className="text-subheading">Map View</Text>
+          <View className="mb-8">
+            <View className="flex-row items-center mb-2 px-4">
               {loadingSegment && (
                 <ActivityIndicator size="small" color="#FC4C02" className="ml-2" />
               )}
             </View>
             
-            <View className="card mx-4" style={{ height: 300, overflow: 'hidden', borderRadius: 12 }}>
+            <View className="card" style={{ height: 350, overflow: 'hidden', borderRadius: 12, marginBottom: 24 }}>
               <MapView
                 style={{ flex: 1 }}
                 initialRegion={{
@@ -201,14 +197,13 @@ export default function Index() {
             </View>
           </View>
 
-          {/* Explore button - Section fixe */}
-          <View className="flex-row gap-2 mb-4 px-4">
-            <TouchableOpacity className="btn-primary flex-1" onPress={() => router.replace('/explore')}>
-              <Text className="text-white text-center font-medium">
-                🚀 Let&apos;s plan a ride
-              </Text>
-            </TouchableOpacity>
-          </View>
+
+
+              <TouchableOpacity className="btn-primary items-center justify-center" onPress={() => router.replace('/explore')}>
+                <Text className="text-white text-center font-medium">
+                  🚀 Let&apos;s plan a ride
+                </Text>
+              </TouchableOpacity>
         </View>
       )}
     </View>

@@ -214,7 +214,7 @@ export default function Index() {
       {/* Action button */}
       <View className="mt-4">
         <TouchableOpacity 
-          className={`py-4 rounded-lg flex-row items-center justify-center ${
+          className={`flex-row items-center justify-center ${
             selectedSegments.size === 0 ? 'btn-primary-disabled' : 'btn-primary'
           }`}
           onPress={createOptimizedRoute}

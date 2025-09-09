@@ -57,12 +57,15 @@ export default function TabLayout() {
               <MaterialCommunityIcons name="account-circle" size={32} color="black" />
             </View>
           ),
-        tabBarStyle: Platform.select({
+        tabBarStyle:{ 
+          ...Platform.select({
           ios: {
             position: 'absolute',
           }
         
         }),
+      
+      }
       }}>
       <Tabs.Screen
         name="index"

@@ -1,16 +1,18 @@
 import { RouteApiService } from "@/api/route";
 import "@/global.css";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    Modal,
-    ScrollView,
-    Share,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Modal,
+  ScrollView,
+  Share,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 
@@ -63,41 +65,35 @@ export default function RoutePreviewScreen({
     longitudeDelta: 0.05,
   };
 
-  const handleExportGPX = async () => {
-    setExportLoading(true);
-    try {
-      Alert.alert(
-        "Export GPX",
-        "Feature temporarily disabled. Installing dependencies..."
-      );
+const handleExportGPX = async () => {
+  setExportLoading(true);
+  try {
+    const gpxContent = await RouteApiService.exportRoute(route.routeId, "gpx");
 
-      const gpxContent = await RouteApiService.exportRoute(route.routeId, 'gpx');
 
-        await Share.share({
-        message: gpxContent,
-        title: `route_${route.routeId}.gpx`,
+    const fileName = `route_${route.routeId}.gpx`;
+    const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+
+
+    await FileSystem.writeAsStringAsync(fileUri, gpxContent, {
+      encoding: FileSystem.EncodingType.UTF8,
+    });
+
+    if (await Sharing.isAvailableAsync()) {
+      await Sharing.shareAsync(fileUri, {
+        mimeType: "application/gpx+xml",
+        dialogTitle: "Exporter la route GPX",
       });
-      
-      /*const fileName = `route_${route.routeId}.gpx`;
-      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-      
-      await FileSystem.writeAsStringAsync(fileUri, gpxContent);
-      
-      if (await Sharing.isAvailableAsync()) {
-        await Sharing.shareAsync(fileUri, {
-          mimeType: 'application/gpx+xml',
-          dialogTitle: 'Export GPX route'
-        });
-      } else {
-        Alert.alert("Success", `Route exported to: ${fileUri}`);
-      } */
-    } catch (error) {
-      console.error("GPX export error:", error);
-      Alert.alert("Error", "Unable to export the route");
-    } finally {
-      setExportLoading(false);
+    } else {
+      Alert.alert("Succès", `Fichier sauvegardé à : ${fileUri}`);
     }
-  };
+  } catch (error) {
+    console.error("GPX export error:", error);
+    Alert.alert("Erreur", "Impossible d’exporter la route");
+  } finally {
+    setExportLoading(false);
+  }
+};
 
   const handleShareRoute = async () => {
     try {
