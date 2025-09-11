@@ -136,14 +136,14 @@ export default function Index() {
           </ScrollView>
           
           {/* Google Maps - Section fixe */}
-          <View className="mb-8">
+          <View className="mb-4">
             <View className="flex-row items-center mb-2 px-4">
               {loadingSegment && (
                 <ActivityIndicator size="small" color="#FC4C02" className="ml-2" />
               )}
             </View>
             
-            <View className="card" style={{ height: 350, overflow: 'hidden', borderRadius: 12, marginBottom: 24 }}>
+            <View className="card" style={{ height: 350, overflow: 'hidden', borderRadius: 12, marginBottom: 12 }}>
               <MapView
                 style={{ flex: 1 }}
                 initialRegion={{

@@ -1,6 +1,7 @@
 import "@/global.css"
 import type { StravaSegment } from "@/types/types"
 import Ionicons from "@expo/vector-icons/Ionicons"
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Constants from "expo-constants"
 import React, { useRef, useState } from "react"
 import {
@@ -66,9 +67,9 @@ export default function RouteConfigurationScreen({
   const autocompleteTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const profiles = [
-    { key: "bike" as const, label: "🚴 Bike", icon: "bicycle" },
-    { key: "foot" as const, label: "🚶 Walk", icon: "walk" },
-    { key: "moutainbike" as const, label: "🚵 MTB", icon: "bicycle" },
+    { key: "bike" as const, label: "Bike", icon: "bicycle" },
+    { key: "foot" as const, label: "Walk", icon: "walk" },
+    { key: "moutainbike" as const, label: "MTB", icon: "bike-fast" },
   ]
 
   // Get autocomplete predictions from Google Places API
@@ -143,12 +144,10 @@ export default function RouteConfigurationScreen({
       clearTimeout(autocompleteTimeout.current)
     }
 
-
     autocompleteTimeout.current = setTimeout(() => {
       getPlacePredictions(text)
     }, 300) // 300ms debounce
   }
-
 
   const handlePredictionSelect = (prediction: PlacePrediction) => {
     setAddressInput(prediction.description)
@@ -156,7 +155,6 @@ export default function RouteConfigurationScreen({
     setPredictions([])
     Keyboard.dismiss()
   }
-
 
   const geocodeAddress = async (address: string) => {
     setAddressLoading(true)
@@ -245,7 +243,6 @@ export default function RouteConfigurationScreen({
     onGenerateRoute(config)
   }
 
-
   React.useEffect(() => {
     if (startPointMode !== "address") {
       setShowPredictions(false)
@@ -263,179 +260,227 @@ export default function RouteConfigurationScreen({
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
       <View className="flex-1 bg-neutral-light">
-        <View className="bg-white border-b-2 border-primary/20 shadow-sm">
-          <View className="flex-row items-center justify-between p-6 pt-12">
-            <TouchableOpacity
+        <TouchableOpacity
               onPress={onClose}
-              className="w-10 h-10 rounded-full bg-neutral-light items-center justify-center"
+              className="rounded-full bg-neutral-dark"
+              style={{ 
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3,
+                margin: 6,
+                position: 'absolute'
+              }}
             >
-              <Ionicons name="close" size={20} color="#545c68" />
+            <Ionicons name="close" size={25} color="#545c68" />
             </TouchableOpacity>
-            <Text className="text-heading text-center">Configure Route</Text>
+        {/* Header */}
+        <View className="bg-white shadow-lg justify-center items-center" style={{ paddingTop: 20, paddingBottom: 20 }}>
+          <View className="items-center justify-center px-6">
+            <View className="items-center">
+              <Text className="text-heading" style={{ fontSize: 20, fontWeight: '700' }}>Route Configuration</Text>
+              <Text className="text-caption" style={{ color: '#6b7280', marginTop: 2 }}>
+                Customize your cycling adventure
+              </Text>
+            </View>
             <View style={{ width: 40 }} />
           </View>
         </View>
 
         <ScrollView className="flex-1 px-4 py-6" keyboardShouldPersistTaps="handled">
-          <View className="mb-8">
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center mr-3">
-                <Text className="text-lg">📍</Text>
+          {/* Selected Segments Section */}
+          <View className="mb-6">
+            <View className="flex-row items-center mb-3">
+              <View className="w-8 h-8 rounded-full bg-primary items-center justify-center mr-3">
+                <MaterialCommunityIcons name="map-marker-multiple" size={18} color="white" />
               </View>
-              <Text className="text-subheading text-neutral-darkest">Selected Segments</Text>
+              <Text className="text-subheading">Selected Segments</Text>
             </View>
-            <View className="card-elevated">
-              <View className="flex-row items-center justify-center mb-3">
+            
+            <View className="card-elevated" style={{ padding: 16 }}>
+              <View className="flex-row items-center justify-center mb-4">
                 <View className="badge-primary">
                   <Text className="text-white font-semibold">
                     {selectedSegments.length} segment{selectedSegments.length > 1 ? "s" : ""}
                   </Text>
                 </View>
               </View>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row">
-                {selectedSegments.map((segment, index) => (
-                  <View
-                    key={segment.id}
-                    className="bg-secondary/10 border border-secondary/20 rounded-xl px-4 py-3 mr-3 min-w-32"
-                  >
-                    <Text className="text-caption font-semibold text-neutral-darkest mb-1" numberOfLines={1}>
-                      {index + 1}. {segment.name}
-                    </Text>
-                    <Text className="text-xs text-secondary font-medium">{segment.distance}m</Text>
-                  </View>
-                ))}
+              
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View className="flex-row">
+                  {selectedSegments.map((segment, index) => (
+                    <View
+                      key={segment.id}
+                      className="bg-primary-light border border-primary rounded-xl mr-3"
+                      style={{ paddingHorizontal: 12, paddingVertical: 8, minWidth: 120 }}
+                    >
+                      <Text className="font-semibold text-primary mb-1" style={{ fontSize: 12 }} numberOfLines={1}>
+                        {index + 1}. {segment.name}
+                      </Text>
+                      <Text className="text-primary" style={{ fontSize: 10, fontWeight: '600' }}>
+                        {Math.round(segment.distance)}m
+                      </Text>
+                    </View>
+                  ))}
+                </View>
               </ScrollView>
             </View>
           </View>
 
-          <View className="mb-8">
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center mr-3">
-                <Text className="text-lg">🏷️</Text>
+          {/* Route Name Section */}
+          <View className="mb-6">
+            <View className="flex-row items-center mb-3">
+              <View className="w-8 h-8 rounded-full bg-primary items-center justify-center mr-3">
+                <MaterialCommunityIcons name="pencil" size={18} color="white" />
               </View>
-              <Text className="text-subheading text-neutral-darkest">Route Name</Text>
+              <Text className="text-subheading">Route Name</Text>
             </View>
+            
             <View className="card">
               <TextInput
                 className="input-field text-body"
                 value={routeName}
                 onChangeText={setRouteName}
-                placeholder="My KOM Route..."
-                placeholderTextColor="#545c68"
+                placeholder="My Epic KOM Hunt..."
+                placeholderTextColor="#9ca3af"
                 maxLength={100}
+                style={{ fontSize: 16, padding: 12 }}
               />
             </View>
           </View>
 
-          <View className="mb-8">
-          <View className="flex-row items-center mb-4">
-            <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center mr-3">
-              <Text className="text-lg">🚲</Text>
-            </View>
-            <Text className="text-subheading text-neutral-darkest">Mode of Transport</Text>
-          </View>
-
-          <View className="flex-row justify-between">
-            {profiles.map(({ key, label }) => {
-              const isSelected = profile === key;
-              return (
-                <TouchableOpacity
-                  key={key}
-                  className={`flex-1 mx-1 py-4 rounded-xl border-2 ${
-                    isSelected
-                      ? "border-primary bg-primary/20 shadow-md"
-                      : "border-neutral-dark/20 bg-white"
-                  }`}
-                  onPress={() => setProfile(key)}
-                >
-                  <Text
-                    className={`text-center font-semibold ${
-                      isSelected ? "text-primary" : "text-neutral-dark"
-                    }`}
-                  >
-                    {label}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        </View>
-
-          <View className="mb-8">
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-primary/10 items-center justify-center mr-3">
-                <Text className="text-lg">📍</Text>
+          {/* Transport Mode Section */}
+          <View className="mb-6">
+            <View className="flex-row items-center mb-3">
+              <View className="w-8 h-8 rounded-full bg-primary items-center justify-center mr-3">
+                <MaterialCommunityIcons name="bicycle" size={18} color="white" />
               </View>
-              <Text className="text-subheading text-neutral-darkest">Start Point</Text>
+              <Text className="text-subheading">Transport Mode</Text>
             </View>
 
-            <View className="card space-y-3">
+            <View className="flex-row justify-between gap-2">
+              {profiles.map(({ key, label, icon }) => {
+                const isSelected = profile === key;
+                return (
+                  <TouchableOpacity
+                    key={key}
+                    className={`flex-1 py-4 px-3 rounded-xl border-2 ${
+                      isSelected
+                        ? "border-primary bg-primary"
+                        : "border-neutral-dark bg-white"
+                    }`}
+                    style={{
+                      shadowColor: isSelected ? '#FC4C02' : 'transparent',
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                      elevation: isSelected ? 6 : 2,
+                    }}
+                    onPress={() => setProfile(key)}
+                  >
+                    <View className="items-center">
+                      <MaterialCommunityIcons 
+                        name={icon as any} 
+                        size={24} 
+                        color={isSelected ? "#e3360b" : "#6b7280"} 
+                      />
+                      <Text
+                        className={`text-center font-semibold mt-2 ${
+                          isSelected ? "text-red-500" : "text-neutral-dark"
+                        }`}
+                        style={{ fontSize: 14 }}
+                      >
+                        {label}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Start Point Section */}
+          <View className="mb-6">
+            <View className="flex-row items-center mb-3">
+              <View className="w-8 h-8 rounded-full bg-primary items-center justify-center mr-3">
+                <MaterialCommunityIcons name="map-marker" size={18} color="white" />
+              </View>
+              <Text className="text-subheading">Starting Point</Text>
+            </View>
+
+            <View className="card" style={{ padding: 12, gap: 12 }}>
               <TouchableOpacity
                 className={`flex-row items-center p-4 rounded-xl border-2 ${
                   startPointMode === "current"
-                    ? "border-primary bg-primary/5"
-                    : "border-neutral-dark/10 bg-neutral-light/50"
+                    ? "border-primary bg-primary-light"
+                    : "border-neutral-light bg-white"
                 }`}
                 onPress={() => setStartPointMode("current")}
               >
                 <View
                   className={`w-6 h-6 rounded-full border-2 mr-4 items-center justify-center ${
-                    startPointMode === "current" ? "border-primary bg-primary" : "border-neutral-dark/30"
+                    startPointMode === "current" ? "border-primary bg-primary" : "border-neutral-dark"
                   }`}
                 >
                   {startPointMode === "current" && <View className="w-2 h-2 bg-white rounded-full" />}
                 </View>
-                <Text className="flex-1 text-body text-neutral-darkest font-medium">
-                  Current position (or first segment)
-                </Text>
+                <View className="flex-1">
+                  <Text className="font-semibold text-neutral-darkest">Current Location</Text>
+                  <Text className="text-caption text-neutral-dark">Use your current position or first segment</Text>
+                </View>
               </TouchableOpacity>
 
               <TouchableOpacity
                 className={`flex-row items-center p-4 rounded-xl border-2 ${
                   startPointMode === "address"
-                    ? "border-primary bg-primary/5"
-                    : "border-neutral-dark/10 bg-neutral-light/50"
+                    ? "border-primary bg-primary-light"
+                    : "border-neutral-light bg-white"
                 }`}
                 onPress={() => setStartPointMode("address")}
               >
                 <View
                   className={`w-6 h-6 rounded-full border-2 mr-4 items-center justify-center ${
-                    startPointMode === "address" ? "border-primary bg-primary" : "border-neutral-dark/30"
+                    startPointMode === "address" ? "border-primary bg-primary" : "border-neutral-dark"
                   }`}
                 >
                   {startPointMode === "address" && <View className="w-2 h-2 bg-white rounded-full" />}
                 </View>
-                <Text className="flex-1 text-body text-neutral-darkest font-medium">Enter an address</Text>
+                <View className="flex-1">
+                  <Text className="font-semibold text-neutral-darkest">Custom Address</Text>
+                  <Text className="text-caption text-neutral-dark">Search for a specific location</Text>
+                </View>
               </TouchableOpacity>
             </View>
 
             {startPointMode === "address" && (
-              <View className="relative mt-4">
+              <View className="relative mt-3">
                 <View className="card">
                   <View className="flex-row items-center">
                     <TextInput
                       className="flex-1 input-field"
                       value={addressInput}
                       onChangeText={handleAddressInputChange}
-                      placeholder="Ex: 123 Main Street, New York, NY"
-                      placeholderTextColor="#545c68"
-                      multiline={false}
+                      placeholder="Search for a location..."
+                      placeholderTextColor="#9ca3af"
+                      style={{ fontSize: 16, padding: 12 }}
                     />
-                    {addressLoading && <ActivityIndicator size="small" color="#e3360b" style={{ marginLeft: 12 }} />}
+                    {addressLoading && (
+                      <ActivityIndicator size="small" color="#FC4C02" style={{ marginLeft: 12 }} />
+                    )}
                   </View>
-                  <Text className="text-caption text-secondary mt-2">Start typing for suggestions...</Text>
                 </View>
 
                 {showPredictions && predictions.length > 0 && (
                   <View className="absolute top-full left-0 right-0 z-10 card-elevated mt-2">
-                  <ScrollView style={{ maxHeight: 200 }}>
+                    <ScrollView style={{ maxHeight: 200 }}>
                       {predictions.map((item) => (
                         <TouchableOpacity
                           key={item.place_id}
-                          className="p-4 border-b border-neutral-light/50 last:border-b-0"
+                          className="p-4 border-b border-neutral-light"
                           onPress={() => handlePredictionSelect(item)}
                         >
-                          <Text className="font-semibold text-neutral-darkest mb-1">
+                          <Text className="font-semibold text-neutral-darkest mb-1" style={{ fontSize: 14 }}>
                             {item.structured_formatting.main_text}
                           </Text>
                           <Text className="text-caption text-neutral-dark">
@@ -448,111 +493,118 @@ export default function RouteConfigurationScreen({
                 )}
               </View>
             )}
-
-            {startPointMode === "coordinates" && (
-              <View className="card mt-4 space-y-3">
-                <TextInput
-                  className="input-field"
-                  value={customStartPoint.latitude}
-                  onChangeText={(text) => setCustomStartPoint((prev) => ({ ...prev, latitude: text }))}
-                  placeholder="Latitude (ex: 45.764)"
-                  placeholderTextColor="#545c68"
-                  keyboardType="numeric"
-                />
-                <TextInput
-                  className="input-field"
-                  value={customStartPoint.longitude}
-                  onChangeText={(text) => setCustomStartPoint((prev) => ({ ...prev, longitude: text }))}
-                  placeholder="Longitude (ex: 4.835)"
-                  placeholderTextColor="#545c68"
-                  keyboardType="numeric"
-                />
-                <TextInput
-                  className="input-field"
-                  value={customStartPoint.name}
-                  onChangeText={(text) => setCustomStartPoint((prev) => ({ ...prev, name: text }))}
-                  placeholder="Place name (optional)"
-                  placeholderTextColor="#545c68"
-                />
-              </View>
-            )}
           </View>
 
-          <View className="mb-8">
+          {/* Return Option */}
+          <View className="mb-6">
             <View className="card">
-              <TouchableOpacity className="flex-row items-center justify-between" onPress={() => setGoBack(!goBack)}>
+              <TouchableOpacity 
+                className="flex-row items-center justify-between p-2" 
+                onPress={() => setGoBack(!goBack)}
+              >
                 <View className="flex-row items-center flex-1">
-                  <Text className="text-lg mr-3">🔄</Text>
+                  <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center mr-3">
+                    <MaterialCommunityIcons name="backup-restore" size={18} color="white" />
+                  </View>
                   <View className="flex-1">
-                    <Text className="text-body font-semibold text-neutral-darkest mb-1">Return to start point</Text>
+                    <Text className="font-semibold text-neutral-darkest mb-1">Return to Start</Text>
                     <Text className="text-caption text-neutral-dark">
-                      Route will automatically return to starting point
+                      Create a loop back to starting point
                     </Text>
                   </View>
                 </View>
-                <View className={`w-14 h-8 rounded-full p-1 ml-4 ${goBack ? "bg-primary" : "bg-neutral-dark/20"}`}>
+                
+                <View 
+                  className={`w-14 h-8 rounded-full p-1 ml-4 ${goBack ? "bg-primary" : "bg-neutral-dark"}`}
+                  style={{ 
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 4,
+                    elevation: 2
+                  }}
+                >
                   <View
-                    className={`w-6 h-6 bg-white rounded-full shadow-sm transition-all ${goBack ? "ml-6" : "ml-0"}`}
+                    className={`w-6 h-6 bg-white rounded-full shadow-sm ${goBack ? "ml-6" : "ml-0"}`}
+                    style={{ 
+                      transform: [{ translateX: goBack ? 0 : 0 }],
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.2,
+                      shadowRadius: 2,
+                      elevation: 3
+                    }}
                   />
                 </View>
               </TouchableOpacity>
             </View>
           </View>
 
-          <View className="card bg-secondary/5 border-2 border-secondary/20 mb-6">
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-secondary/20 items-center justify-center mr-3">
-                <Text className="text-lg">📋</Text>
-              </View>
-              <Text className="text-subheading text-neutral-darkest">Route Summary</Text>
+          {/* Route Summary */}
+          <View className="alert-info mb-6" style={{ backgroundColor: '#f0f9ff', borderLeftColor: '#0ea5e9' }}>
+            <View className="flex-row items-center mb-3">
+              <MaterialCommunityIcons name="information" size={20} color="#0ea5e9" />
+              <Text className="text-subheading ml-2" style={{ color: '#0c4a6e' }}>Route Summary</Text>
             </View>
-            <View className="space-y-2">
+            <View style={{ gap: 8 }}>
               <View className="flex-row items-center">
                 <View className="w-2 h-2 rounded-full bg-secondary mr-3" />
-                <Text className="text-body text-neutral-darkest">{selectedSegments.length} segments to visit</Text>
+                <Text className="text-body" style={{ color: '#0c4a6e' }}>
+                  {selectedSegments.length} segments to conquer
+                </Text>
               </View>
               <View className="flex-row items-center">
                 <View className="w-2 h-2 rounded-full bg-secondary mr-3" />
-                <Text className="text-body text-neutral-darkest">
+                <Text className="text-body" style={{ color: '#0c4a6e' }}>
                   Mode: {profiles.find((p) => p.key === profile)?.label}
                 </Text>
               </View>
               <View className="flex-row items-center">
                 <View className="w-2 h-2 rounded-full bg-secondary mr-3" />
-                <Text className="text-body text-neutral-darkest">
-                  Start:{" "}
-                  {startPointMode === "current"
-                    ? "Current position"
-                    : startPointMode === "address"
-                      ? "Custom address"
-                      : "GPS coordinates"}
+                <Text className="text-body" style={{ color: '#0c4a6e' }}>
+                  Start: {startPointMode === "current" ? "Current location" : "Custom address"}
                 </Text>
               </View>
               <View className="flex-row items-center">
                 <View className="w-2 h-2 rounded-full bg-secondary mr-3" />
-                <Text className="text-body text-neutral-darkest">
-                  {goBack ? "With" : "Without"} return to start point
+                <Text className="text-body" style={{ color: '#0c4a6e' }}>
+                  {goBack ? "Round trip" : "One way journey"}
                 </Text>
               </View>
             </View>
           </View>
         </ScrollView>
 
-        <View className="p-6 bg-white border-t-2 border-neutral-light/50">
+        {/* Generate Button */}
+        <View className="p-6 bg-white border-t border-neutral-light" 
+              style={{ 
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: -2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 8
+              }}>
           <TouchableOpacity
-            className={`py-4 px-6 rounded-xl flex-row items-center justify-center shadow-lg ${
+            className={`py-4 px-6 rounded-xl flex-row items-center justify-center ${
               loading || addressLoading ? "btn-primary-disabled" : "btn-primary"
             }`}
+            style={{
+              shadowColor: loading || addressLoading ? 'transparent' : '#FC4C02',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: loading || addressLoading ? 0 : 6,
+            }}
             onPress={handleGenerateRoute}
             disabled={loading || addressLoading}
           >
             {loading || addressLoading ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Ionicons name="map" size={22} color="white" />
+              <MaterialCommunityIcons name="map-marker-path" size={22} color="white" />
             )}
             <Text className="text-white font-semibold text-lg ml-3">
-              {loading ? "Generating Route..." : "Generate Route"}
+              {loading ? "Creating Route..." : "Generate Optimal Route"}
             </Text>
           </TouchableOpacity>
         </View>
