@@ -7,7 +7,7 @@ import { useRouter } from 'expo-router';
 import React, { useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import { useSegmentsContext } from "../contexts/SegmentsContext";
+import { useSegmentsContext } from "../../contexts/SegmentsContext";
 
 export default function Index() {
   const { segments, loading, error, refetch } = useSegmentsContext();

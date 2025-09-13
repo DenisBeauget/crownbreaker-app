@@ -1,6 +1,7 @@
 import { RouteApiService } from "@/api/route";
 import "@/global.css";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import React, { useState } from "react";
@@ -8,11 +9,10 @@ import {
   ActivityIndicator,
   Alert,
   Modal,
-  ScrollView,
   Share,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 
@@ -65,45 +65,42 @@ export default function RoutePreviewScreen({
     longitudeDelta: 0.05,
   };
 
-const handleExportGPX = async () => {
-  setExportLoading(true);
-  try {
-    const gpxContent = await RouteApiService.exportRoute(route.routeId, "gpx");
+  const handleExportGPX = async () => {
+    setExportLoading(true);
+    try {
+      const gpxContent = await RouteApiService.exportRoute(route.routeId, "gpx");
+      const fileName = `route_${route.routeId}.gpx`;
+      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
 
-
-    const fileName = `route_${route.routeId}.gpx`;
-    const fileUri = `${FileSystem.documentDirectory}${fileName}`;
-
-
-    await FileSystem.writeAsStringAsync(fileUri, gpxContent, {
-      encoding: FileSystem.EncodingType.UTF8,
-    });
-
-    if (await Sharing.isAvailableAsync()) {
-      await Sharing.shareAsync(fileUri, {
-        mimeType: "application/gpx+xml",
-        dialogTitle: "Exporter la route GPX",
+      await FileSystem.writeAsStringAsync(fileUri, gpxContent, {
+        encoding: FileSystem.EncodingType.UTF8,
       });
-    } else {
-      Alert.alert("Succès", `Fichier sauvegardé à : ${fileUri}`);
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri, {
+          mimeType: "application/gpx+xml",
+          dialogTitle: "Export GPX Route",
+        });
+      } else {
+        Alert.alert("Success", `File saved to: ${fileUri}`);
+      }
+    } catch (error) {
+      console.error("GPX export error:", error);
+      Alert.alert("Error", "Unable to export route");
+    } finally {
+      setExportLoading(false);
     }
-  } catch (error) {
-    console.error("GPX export error:", error);
-    Alert.alert("Erreur", "Impossible d’exporter la route");
-  } finally {
-    setExportLoading(false);
-  }
-};
+  };
 
   const handleShareRoute = async () => {
     try {
       await Share.share({
-        message: `🚴 My optimized KOM route!\n\n📏 Distance: ${Math.round(
+        message: `My optimized KOM route!\n\nDistance: ${Math.round(
           route.totalDistance / 1000
-        )}km\n⏱️ Duration: ${Math.round(
+        )}km\nDuration: ${Math.round(
           route.totalDuration / 60
-        )}min\n📍 ${route.segments.length} segments to conquer\n\n#CrownBreaker #KOM #Strava`,
-        title: "My optimized KOM route",
+        )}min\nSegments: ${route.segments.length}\n\n#CrownBreaker #KOM #Strava`,
+        title: "My Crownbreaker route !",
       });
     } catch (error) {
       console.error("Share error:", error);
@@ -117,17 +114,54 @@ const handleExportGPX = async () => {
       presentationStyle="fullScreen"
       onRequestClose={onClose}
     >
-      <View className="flex-1 bg-white">
+        <View className="flex-1 bg-neutral-light">
+        <TouchableOpacity
+              onPress={onClose}
+              className="rounded-full bg-neutral-dark"
+              style={{ 
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3,
+                margin: 6,
+                position: 'absolute',
+                zIndex: 10
+              }}
+            >
+            <Ionicons name="close" size={25} color="#545c68" />
+            </TouchableOpacity>
+        <TouchableOpacity 
+          onPress={handleShareRoute} 
+          className="rounded-full bg-primary-light"
+          style={{
+            shadowColor: '#FC4C02',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.2,
+            shadowRadius: 4,
+            elevation: 3,
+            margin: 6,
+            padding: 4,
+            position: 'absolute',
+            right: 0,
+            zIndex: 10
+          }}
+        >
+          <MaterialCommunityIcons name="share-variant" size={25} color="#FC4C02" />
+        </TouchableOpacity>
         {/* Header */}
-        <View className="flex-row items-center justify-between p-4 border-b border-gray-200 bg-white">
-          <TouchableOpacity onPress={onClose} className="p-2">
-            <Ionicons name="arrow-back" size={24} color="#333" />
-          </TouchableOpacity>
-          <Text className="text-lg font-semibold">Route Preview</Text>
-          <TouchableOpacity onPress={handleShareRoute} className="p-2">
-            <Ionicons name="share" size={24} color="#FC4C02" />
-          </TouchableOpacity>
+        <View className="bg-white shadow-lg justify-center items-center" style={{ paddingTop: 20, paddingBottom: 20 }}>
+          <View className="items-center justify-center px-6">
+            <View className="items-center">
+              <Text className="text-heading" style={{ fontSize: 20, fontWeight: '700' }}>Route Preview</Text>
+              <Text className="text-caption" style={{ color: '#6b7280', marginTop: 2 }}>
+                Your optimized adventure
+              </Text>
+            </View>
+            <View style={{ width: 40 }} />
+          </View>
         </View>
+
 
         {/* Map */}
         <View className="flex-1">
@@ -185,34 +219,54 @@ const handleExportGPX = async () => {
           {/* Stats overlay */}
           {showStats && (
             <View className="absolute bottom-4 left-4 right-4">
-              <View className="card bg-white/95 backdrop-blur">
-                <View className="flex-row justify-between items-center mb-3">
-                  <Text className="text-subheading">📊 Stats</Text>
+              <View 
+                className="card-elevated bg-white"
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                <View className="flex-row items-center justify-between mb-4">
+                  <View className="flex-row items-center">
+                    <View className="w-8 h-8 rounded-full bg-primary items-center justify-center mr-3">
+                      <MaterialCommunityIcons name="chart-line" size={16} color="white" />
+                    </View>
+                    <Text className="text-subheading">Route Statistics</Text>
+                  </View>
                   <TouchableOpacity onPress={() => setShowStats(false)}>
-                    <Ionicons name="chevron-down" size={20} color="#666" />
+                    <MaterialCommunityIcons name="chevron-down" size={20} color="#6b7280" />
                   </TouchableOpacity>
                 </View>
 
-                <View className="flex-row justify-between mb-2">
+                <View className="flex-row justify-between">
                   <View className="flex-1 items-center">
-                    <Text className="text-2xl font-bold text-primary">
-                      {Math.round(route.totalDistance / 1000)}
-                    </Text>
-                    <Text className="text-caption text-gray-600">km</Text>
+                    <View className="flex-row items-center mb-1">
+                      <MaterialCommunityIcons name="map-marker-distance" size={16} color="#FC4C02" />
+                      <Text className="text-2xl font-bold text-primary ml-1">
+                        {Math.round(route.totalDistance / 1000)}
+                      </Text>
+                    </View>
+                    <Text className="text-caption text-neutral-dark">kilometers</Text>
                   </View>
 
                   <View className="flex-1 items-center">
-                    <Text className="text-2xl font-bold text-primary">
-                      {Math.round(route.totalDuration / 60)}
-                    </Text>
-                    <Text className="text-caption text-gray-600">min</Text>
+                    <View className="flex-row items-center mb-1">
+                      <MaterialCommunityIcons name="clock-outline" size={16} color="#FC4C02" />
+                      <Text className="text-2xl font-bold text-primary ml-1">
+                        {Math.round(route.totalDuration / 60)}
+                      </Text>
+                    </View>
+                    <Text className="text-caption text-neutral-dark">minutes</Text>
                   </View>
 
                   <View className="flex-1 items-center">
-                    <Text className="text-2xl font-bold text-primary">
-                      {route.segments.length}
-                    </Text>
-                    <Text className="text-caption text-gray-600">segments</Text>
+                    <View className="flex-row items-center mb-1">
+                      <MaterialCommunityIcons name="flag-checkered" size={16} color="#FC4C02" />
+                      <Text className="text-2xl font-bold text-primary ml-1">
+                        {route.segments.length}
+                      </Text>
+                    </View>
+                    <Text className="text-caption text-neutral-dark">segments</Text>
                   </View>
                 </View>
               </View>
@@ -222,62 +276,42 @@ const handleExportGPX = async () => {
           {/* Toggle stats button when hidden */}
           {!showStats && (
             <TouchableOpacity
-              className="absolute bottom-4 right-4 bg-white rounded-full p-3 shadow-lg"
+              className="absolute bottom-4 right-4 w-14 h-14 bg-white rounded-full items-center justify-center"
+              style={{
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.15,
+                shadowRadius: 8,
+                elevation: 8
+              }}
               onPress={() => setShowStats(true)}
             >
-              <Ionicons name="stats-chart" size={24} color="#FC4C02" />
+              <MaterialCommunityIcons name="chart-line" size={24} color="#FC4C02" />
             </TouchableOpacity>
           )}
         </View>
 
-        {/* Segments list */}
-        <View className="max-h-48 border-t border-gray-200">
-          <TouchableOpacity
-            className="p-4 border-b border-gray-100"
-            onPress={() => {
-              /* TODO: Toggle list visibility */
-            }}
-          >
-            <Text className="text-subheading text-center">
-              📍 {route.segments.length} segments to conquer
-            </Text>
-          </TouchableOpacity>
-
-          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-            {route.segments.map((segment, index) => (
-              <View
-                key={segment.id}
-                className="flex-row items-center p-3 border-b border-gray-50"
-              >
-                <View className="w-6 h-6 rounded-full bg-primary items-center justify-center mr-3">
-                  <Text className="text-white text-xs font-bold">
-                    {index + 1}
-                  </Text>
-                </View>
-
-                <View className="flex-1">
-                  <Text className="font-medium" numberOfLines={1}>
-                    {segment.name}
-                  </Text>
-                  <Text className="text-caption text-gray-600">
-                    {segment.distance}m •{" "}
-                    {segment.komTime
-                      ? Math.round(segment.komTime / 60) + " min"
-                      : "N/A"}
-                  </Text>
-                </View>
-
-                <Ionicons name="flag" size={16} color="#FC4C02" />
-              </View>
-            ))}
-          </ScrollView>
-        </View>
+  
 
         {/* Actions */}
-        <View className="p-4 border-t border-gray-200 bg-white">
-          <View className="flex-row space-x-3">
+        <View className="p-4 bg-white border-t border-neutral-light" 
+              style={{ 
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: -2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+                elevation: 8
+              }}>
+          <View className="flex-row" style={{ gap: 12 }}>
             <TouchableOpacity
-              className="flex-1 py-3 px-4 bg-gray-100 rounded-lg flex-row items-center justify-center"
+              className="flex-1 py-3 px-4 bg-neutral-light rounded-xl flex-row items-center justify-center border-2 border-neutral-dark"
+              style={{
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3
+              }}
               onPress={() => {
                 Alert.alert(
                   "Saved",
@@ -285,23 +319,30 @@ const handleExportGPX = async () => {
                 );
               }}
             >
-              <Ionicons name="bookmark" size={18} color="#666" />
-              <Text className="text-gray-700 font-medium ml-2">Save</Text>
+              <MaterialCommunityIcons name="bookmark-outline" size={18} color="#374151" />
+              <Text className="text-neutral-darkest font-semibold ml-2">Save Route</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg flex-row items-center justify-center ${
+              className={`flex-1 py-3 px-4 rounded-xl flex-row items-center justify-center ${
                 exportLoading ? "btn-primary-disabled" : "btn-primary"
               }`}
+              style={{
+                shadowColor: exportLoading ? 'transparent' : '#FC4C02',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: exportLoading ? 0 : 6,
+              }}
               onPress={handleExportGPX}
               disabled={exportLoading}
             >
               {exportLoading ? (
                 <ActivityIndicator size="small" color="white" />
               ) : (
-                <Ionicons name="download" size={18} color="white" />
+                <MaterialCommunityIcons name="download" size={18} color="white" />
               )}
-              <Text className="text-white font-medium ml-2">
+              <Text className="text-white font-semibold ml-2">
                 {exportLoading ? "Exporting..." : "Export GPX"}
               </Text>
             </TouchableOpacity>

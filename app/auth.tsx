@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { openAuthSessionAsync } from 'expo-web-browser';
 import React, { useEffect } from 'react';
 import { Alert, Linking, Text, TouchableOpacity, View } from 'react-native';
-import { useAuth } from './contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const API_BASE_URL = "https://kom-optimizer-production.up.railway.app";
 

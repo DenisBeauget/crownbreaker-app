@@ -281,7 +281,7 @@ export default function RouteConfigurationScreen({
             <View className="items-center">
               <Text className="text-heading" style={{ fontSize: 20, fontWeight: '700' }}>Route Configuration</Text>
               <Text className="text-caption" style={{ color: '#6b7280', marginTop: 2 }}>
-                Customize your cycling adventure
+                Customize your adventure
               </Text>
             </View>
             <View style={{ width: 40 }} />
@@ -411,11 +411,17 @@ export default function RouteConfigurationScreen({
 
             <View className="card" style={{ padding: 12, gap: 12 }}>
               <TouchableOpacity
-                className={`flex-row items-center p-4 rounded-xl border-2 ${
-                  startPointMode === "current"
-                    ? "border-primary bg-primary-light"
-                    : "border-neutral-light bg-white"
-                }`}
+                className={"flex-row items-center"}
+                style={{
+                  backgroundColor: '#ffffff',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 3 },
+                  shadowOpacity: 0.12,
+                  shadowRadius: 6,
+                  elevation: 4,
+                  padding: 4,
+                  borderRadius: 8
+                }}
                 onPress={() => setStartPointMode("current")}
               >
                 <View
@@ -429,33 +435,55 @@ export default function RouteConfigurationScreen({
                   <Text className="font-semibold text-neutral-darkest">Current Location</Text>
                   <Text className="text-caption text-neutral-dark">Use your current position or first segment</Text>
                 </View>
+                  <View className={`w-8 h-8 rounded-full items-center justify-center`}>
+                    <MaterialCommunityIcons 
+                      name="map-marker-account" 
+                      size={20} 
+                      color= {startPointMode === "current" ? "#FC4C02" : "#666"} 
+                    />
+                </View>
+               
               </TouchableOpacity>
 
-              <TouchableOpacity
-                className={`flex-row items-center p-4 rounded-xl border-2 ${
-                  startPointMode === "address"
-                    ? "border-primary bg-primary-light"
-                    : "border-neutral-light bg-white"
-                }`}
+             <TouchableOpacity
+                className={"flex-row items-center"}
+                style={{
+                  backgroundColor: '#ffffff',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 3 },
+                  shadowOpacity: 0.12,
+                  shadowRadius: 6,
+                  elevation: 4,
+                  padding: 4,
+                  borderRadius: 8
+                }}
                 onPress={() => setStartPointMode("address")}
+                activeOpacity={0.75}
               >
                 <View
-                  className={`w-6 h-6 rounded-full border-2 mr-4 items-center justify-center ${
-                    startPointMode === "address" ? "border-primary bg-primary" : "border-neutral-dark"
-                  }`}
+                  className={`w-6 h-6 rounded-full border-2 mr-4 items-center justify-center`}
                 >
                   {startPointMode === "address" && <View className="w-2 h-2 bg-white rounded-full" />}
                 </View>
                 <View className="flex-1">
-                  <Text className="font-semibold text-neutral-darkest">Custom Address</Text>
-                  <Text className="text-caption text-neutral-dark">Search for a specific location</Text>
+                  <Text className={`font-semibold`}>
+                    Custom Address
+                  </Text>
+                  <Text className="text-sm text-gray-600">Search for a specific location</Text>
+                </View>
+                <View className={`w-4 h-8 rounded-full items-center justify-center`}>
+                  <MaterialCommunityIcons 
+                    name="map-marker" 
+                    size={20} 
+                    color={startPointMode === "address" ? "#FC4C02" : "#666"} 
+                  />
                 </View>
               </TouchableOpacity>
             </View>
 
             {startPointMode === "address" && (
               <View className="relative mt-3">
-                <View className="card">
+                <View className="card border-primary-light">
                   <View className="flex-row items-center">
                     <TextInput
                       className="flex-1 input-field"
@@ -496,83 +524,103 @@ export default function RouteConfigurationScreen({
           </View>
 
           {/* Return Option */}
-          <View className="mb-6">
-            <View className="card">
-              <TouchableOpacity 
-                className="flex-row items-center justify-between p-2" 
-                onPress={() => setGoBack(!goBack)}
-              >
-                <View className="flex-row items-center flex-1">
-                  <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center mr-3">
-                    <MaterialCommunityIcons name="backup-restore" size={18} color="white" />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="font-semibold text-neutral-darkest mb-1">Return to Start</Text>
-                    <Text className="text-caption text-neutral-dark">
-                      Create a loop back to starting point
-                    </Text>
-                  </View>
-                </View>
-                
-                <View 
-                  className={`w-14 h-8 rounded-full p-1 ml-4 ${goBack ? "bg-primary" : "bg-neutral-dark"}`}
-                  style={{ 
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 4,
-                    elevation: 2
-                  }}
+            <View className="mb-6">
+              <View className="card">
+                <TouchableOpacity 
+                  className="flex-row items-center justify-between p-2" 
+                  onPress={() => setGoBack(!goBack)}
+                  activeOpacity={0.7}
                 >
-                  <View
-                    className={`w-6 h-6 bg-white rounded-full shadow-sm ${goBack ? "ml-6" : "ml-0"}`}
-                    style={{ 
-                      transform: [{ translateX: goBack ? 0 : 0 }],
-                      shadowColor: '#000',
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.2,
-                      shadowRadius: 2,
-                      elevation: 3
+                  <View className="flex-row flex-1">
+                    <View className="w-8 h-8 rounded-full bg-secondary">
+                      <MaterialCommunityIcons name="backup-restore" size={18} color="white" />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="font-semibold text-neutral-darkest mb-1">Return to Start</Text>
+                      <Text className="text-caption text-neutral-dark">
+                        Create a loop back to starting point
+                      </Text>
+                    </View>
+                  </View>
+                  
+                  {/* Checkbox */}
+                  <View 
+                    style={{
+                      width: 22,
+                      height: 22,
+                      borderWidth: 2,
+                      borderColor: goBack ? '#FC4C02' : '#d1d5db',
+                      backgroundColor: goBack ? '#FC4C02' : 'transparent',
+                      borderRadius: 6,
+                      justifyContent: 'center',
+                      alignItems: 'center'
                     }}
-                  />
-                </View>
-              </TouchableOpacity>
+                  >
+                    {goBack && (
+                      <Ionicons name="checkmark" size={14} color="white" />
+                    )}
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
 
-          {/* Route Summary */}
-          <View className="alert-info mb-6" style={{ backgroundColor: '#f0f9ff', borderLeftColor: '#0ea5e9' }}>
-            <View className="flex-row items-center mb-3">
-              <MaterialCommunityIcons name="information" size={20} color="#0ea5e9" />
-              <Text className="text-subheading ml-2" style={{ color: '#0c4a6e' }}>Route Summary</Text>
-            </View>
-            <View style={{ gap: 8 }}>
-              <View className="flex-row items-center">
-                <View className="w-2 h-2 rounded-full bg-secondary mr-3" />
-                <Text className="text-body" style={{ color: '#0c4a6e' }}>
-                  {selectedSegments.length} segments to conquer
-                </Text>
-              </View>
-              <View className="flex-row items-center">
-                <View className="w-2 h-2 rounded-full bg-secondary mr-3" />
-                <Text className="text-body" style={{ color: '#0c4a6e' }}>
-                  Mode: {profiles.find((p) => p.key === profile)?.label}
-                </Text>
-              </View>
-              <View className="flex-row items-center">
-                <View className="w-2 h-2 rounded-full bg-secondary mr-3" />
-                <Text className="text-body" style={{ color: '#0c4a6e' }}>
-                  Start: {startPointMode === "current" ? "Current location" : "Custom address"}
-                </Text>
-              </View>
-              <View className="flex-row items-center">
-                <View className="w-2 h-2 rounded-full bg-secondary mr-3" />
-                <Text className="text-body" style={{ color: '#0c4a6e' }}>
-                  {goBack ? "Round trip" : "One way journey"}
-                </Text>
-              </View>
-            </View>
-          </View>
+         {/* Route Summary */}
+                <View className="alert-info mb-6" style={{ backgroundColor: '#f0f9ff', borderLeftColor: '#0ea5e9' }}>
+                  <View className="flex-row items-center">
+                    <MaterialCommunityIcons name="information" size={18} color="#0ea5e9" />
+                    <Text className="text-lg font-medium" style={{ color: '#0c4a6e', marginLeft: 3 }}>Route Summary</Text>
+                  </View>
+
+                  <View style={{ gap: 12 }}>
+                    <View className="flex-row items-start">
+                      <View className="w-1.5 h-1.5 rounded-full mt-2 mr-3" style={{ backgroundColor: '#0ea5e9' }} />
+                      <View className="flex-1">
+                        <Text className="text-sm font-medium" style={{ color: '#0c4a6e' }}>
+                          Segments to conquer
+                        </Text>
+                        <Text className="text-xs mt-0.5" style={{ color: '#64748b' }}>
+                          {selectedSegments.length} selected
+                        </Text>
+                      </View>
+                    </View>
+                    
+                    <View className="flex-row items-start">
+                      <View className="w-1.5 h-1.5 rounded-full mt-2 mr-3" style={{ backgroundColor: '#0ea5e9' }} />
+                      <View className="flex-1">
+                        <Text className="text-sm font-medium" style={{ color: '#0c4a6e' }}>
+                          Transport mode
+                        </Text>
+                        <Text className="text-xs mt-0.5" style={{ color: '#64748b' }}>
+                          {profiles.find((p) => p.key === profile)?.label}
+                        </Text>
+                      </View>
+                    </View>
+                    
+                    <View className="flex-row items-start">
+                      <View className="w-1.5 h-1.5 rounded-full mt-2 mr-3" style={{ backgroundColor: '#0ea5e9' }} />
+                      <View className="flex-1">
+                        <Text className="text-sm font-medium" style={{ color: '#0c4a6e' }}>
+                          Starting point
+                        </Text>
+                        <Text className="text-xs mt-0.5" style={{ color: '#64748b' }}>
+                          {startPointMode === "current" ? "Current location" : "Custom address"}
+                        </Text>
+                      </View>
+                    </View>
+
+                     <View className="flex-row items-start">
+                      <View className="w-1.5 h-1.5 rounded-full mt-2 mr-3" style={{ backgroundColor: '#0ea5e9' }} />
+                      <View className="flex-1">
+                        <Text className="text-sm font-medium" style={{ color: '#0c4a6e' }}>
+                          Journey type
+                        </Text>
+                        <Text className="text-xs mt-0.5" style={{ color: '#64748b' }}>
+                          {goBack ? "Return to start" : "One way journey"}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
         </ScrollView>
 
         {/* Generate Button */}

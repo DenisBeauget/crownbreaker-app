@@ -7,7 +7,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useSegmentsContext } from "../contexts/SegmentsContext";
+import { useSegmentsContext } from "../../contexts/SegmentsContext";
 
 export default function Index() {
   const { segments, loading, error, refetch } = useSegmentsContext();
@@ -120,7 +120,6 @@ export default function Index() {
     <View className="container-main">
       {/* Header Section */}
       <View className="mb-6">
-        {/* Titre principal avec icône */}
         <View className="flex-row items-center justify-center mb-2">
           <Text className="text-heading ml-2" style={{ fontSize: 24, fontWeight: '700', color: '#1a1a1a' }}>
             Available Segments
@@ -173,7 +172,6 @@ export default function Index() {
                 paddingHorizontal: 16,
                 paddingVertical: 12
               }}
-              onPress={() => showSegmentDetails(segment, index)}
               activeOpacity={0.7}
             >
               {/* Header avec nom et checkbox */}
@@ -188,7 +186,7 @@ export default function Index() {
                   </Text>
                 </View>
 
-                {/* Checkbox - GARDE LA LOGIQUE ORIGINALE */}
+                {/* Checkbox */}
                 <TouchableOpacity 
                   onPress={() => toggleSegment(segment.id)}
                   className="flex-row items-center py-3"
@@ -216,8 +214,8 @@ export default function Index() {
               
               {/* Stats compactes avec icônes */}
               <View className="flex-row justify-between items-center">
-                <View className="flex-row items-center">
-                  <View className="flex-row items-center mr-4">
+                <View className="flex-row items-center" style={{ gap: 12 }}>
+                  <View className="flex-row items-center">
                     <MaterialCommunityIcons name="ruler" size={14} color="#6b7280" />
                     <Text className="text-sm ml-1" style={{ color: '#6b7280' }}>
                       {Math.round(segment.distance)}m
