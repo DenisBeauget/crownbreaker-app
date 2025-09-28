@@ -31,7 +31,7 @@ interface RouteConfig {
     longitude: number
     name?: string
   }
-  profile: "bike" | "foot" | "moutainbike"
+  profile: "bike"
   goBack: boolean
 }
 
@@ -52,7 +52,6 @@ export default function RouteConfigurationScreen({
   loading = false,
 }: RouteConfigurationProps) {
   const [routeName, setRouteName] = useState("")
-  const [profile, setProfile] = useState<"bike" | "foot" | "moutainbike">("bike")
   const [goBack, setGoBack] = useState(false)
   const [startPointMode, setStartPointMode] = useState<"current" | "address" | "coordinates">("current")
   const [addressInput, setAddressInput] = useState("")
@@ -65,12 +64,6 @@ export default function RouteConfigurationScreen({
   const [predictions, setPredictions] = useState<PlacePrediction[]>([])
   const [showPredictions, setShowPredictions] = useState(false)
   const autocompleteTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const profiles = [
-    { key: "bike" as const, label: "Bike", icon: "bicycle" },
-    { key: "foot" as const, label: "Walk", icon: "walk" },
-    { key: "moutainbike" as const, label: "MTB", icon: "bike-fast" },
-  ]
 
   // Get autocomplete predictions from Google Places API
   const getPlacePredictions = async (input: string) => {
@@ -166,6 +159,7 @@ export default function RouteConfigurationScreen({
         throw new Error("Google Maps API key not configured")
       }
 
+
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`,
       )
@@ -236,7 +230,7 @@ export default function RouteConfigurationScreen({
     const config: RouteConfig = {
       routeName: routeName.trim(),
       startPoint,
-      profile,
+      profile: "bike", // Toujours "bike" maintenant
       goBack,
     }
 
@@ -350,56 +344,6 @@ export default function RouteConfigurationScreen({
             </View>
           </View>
 
-          {/* Transport Mode Section */}
-          <View className="mb-6">
-            <View className="flex-row items-center mb-3">
-              <View className="w-8 h-8 rounded-full bg-primary items-center justify-center mr-3">
-                <MaterialCommunityIcons name="bicycle" size={18} color="white" />
-              </View>
-              <Text className="text-subheading">Transport Mode</Text>
-            </View>
-
-            <View className="flex-row justify-between gap-2">
-              {profiles.map(({ key, label, icon }) => {
-                const isSelected = profile === key;
-                return (
-                  <TouchableOpacity
-                    key={key}
-                    className={`flex-1 py-4 px-3 rounded-xl border-2 ${
-                      isSelected
-                        ? "border-primary bg-primary"
-                        : "border-neutral-dark bg-white"
-                    }`}
-                    style={{
-                      shadowColor: isSelected ? '#FC4C02' : 'transparent',
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 8,
-                      elevation: isSelected ? 6 : 2,
-                    }}
-                    onPress={() => setProfile(key)}
-                  >
-                    <View className="items-center">
-                      <MaterialCommunityIcons 
-                        name={icon as any} 
-                        size={24} 
-                        color={isSelected ? "#e3360b" : "#6b7280"} 
-                      />
-                      <Text
-                        className={`text-center font-semibold mt-2 ${
-                          isSelected ? "text-red-500" : "text-neutral-dark"
-                        }`}
-                        style={{ fontSize: 14 }}
-                      >
-                        {label}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-          </View>
-
           {/* Start Point Section */}
           <View className="mb-6">
             <View className="flex-row items-center mb-3">
@@ -432,7 +376,7 @@ export default function RouteConfigurationScreen({
                   {startPointMode === "current" && <View className="w-2 h-2 bg-white rounded-full" />}
                 </View>
                 <View className="flex-1">
-                  <Text className="font-semibold text-neutral-darkest">Current Location</Text>
+                  <Text className="font-semibold"style={{color: '#545c68' }} >Current Location</Text>
                   <Text className="text-caption text-neutral-dark">Use your current position or first segment</Text>
                 </View>
                   <View className={`w-8 h-8 rounded-full items-center justify-center`}>
@@ -461,15 +405,17 @@ export default function RouteConfigurationScreen({
                 activeOpacity={0.75}
               >
                 <View
-                  className={`w-6 h-6 rounded-full border-2 mr-4 items-center justify-center`}
+                  className={`w-6 h-6 rounded-full border-2 mr-4 items-center justify-center ${
+                    startPointMode === "address" ? "border-primary bg-primary" : "border-neutral-dark"
+                  }`}
                 >
                   {startPointMode === "address" && <View className="w-2 h-2 bg-white rounded-full" />}
                 </View>
                 <View className="flex-1">
-                  <Text className={`font-semibold`}>
+                  <Text className={`font-semibold`} style={{color: '#545c68' }}>
                     Custom Address
                   </Text>
-                  <Text className="text-sm text-gray-600">Search for a specific location</Text>
+                  <Text className="text-sm" style={{color: '#545c68' }}>Search for a specific location</Text>
                 </View>
                 <View className={`w-4 h-8 rounded-full items-center justify-center`}>
                   <MaterialCommunityIcons 
@@ -531,8 +477,8 @@ export default function RouteConfigurationScreen({
                   onPress={() => setGoBack(!goBack)}
                   activeOpacity={0.7}
                 >
-                  <View className="flex-row flex-1">
-                    <View className="w-8 h-8 rounded-full bg-secondary">
+                  <View className="flex-row items-center flex-1">
+                    <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center mr-3">
                       <MaterialCommunityIcons name="backup-restore" size={18} color="white" />
                     </View>
                     <View className="flex-1">
@@ -580,18 +526,6 @@ export default function RouteConfigurationScreen({
                         </Text>
                         <Text className="text-xs mt-0.5" style={{ color: '#64748b' }}>
                           {selectedSegments.length} selected
-                        </Text>
-                      </View>
-                    </View>
-                    
-                    <View className="flex-row items-start">
-                      <View className="w-1.5 h-1.5 rounded-full mt-2 mr-3" style={{ backgroundColor: '#0ea5e9' }} />
-                      <View className="flex-1">
-                        <Text className="text-sm font-medium" style={{ color: '#0c4a6e' }}>
-                          Transport mode
-                        </Text>
-                        <Text className="text-xs mt-0.5" style={{ color: '#64748b' }}>
-                          {profiles.find((p) => p.key === profile)?.label}
                         </Text>
                       </View>
                     </View>

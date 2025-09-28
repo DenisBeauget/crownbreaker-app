@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+
   useEffect(() => {
     checkAuthStatus();
   }, []);
@@ -26,14 +27,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const checkAuthStatus = async () => {
     try {
       const token = await AsyncStorage.getItem('authToken');
+      
       if (token) {
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       setIsAuthenticated(false);
-      console.error('Error checking auth status:', error);
     } finally {
       setIsLoading(false);
     }

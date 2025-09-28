@@ -24,7 +24,6 @@ const useStravaAuth = () => {
 
         if (error) {
           setIsAuthenticating(false);
-          Alert.alert('Authentication Error', error);
         } else if (success === 'true' && token) {
           setIsAuthenticating(false);
           const user = userStr ? JSON.parse(decodeURIComponent(userStr)) : null;

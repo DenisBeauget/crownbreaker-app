@@ -5,7 +5,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 import React, { useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Linking, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
 import { useSegmentsContext } from "../../contexts/SegmentsContext";
 
@@ -16,6 +16,27 @@ export default function Index() {
   const [segmentDetails, setSegmentDetails] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
+
+
+  const openStrava = async () => {
+  try {
+    const stravaUrl = 'strava://';
+    const supported = await Linking.canOpenURL(stravaUrl);
+    
+    if (supported) {
+      await Linking.openURL(stravaUrl);
+    } else {
+      const storeUrl = Platform.OS === 'ios' 
+        ? 'https://apps.apple.com/app/strava-run-ride-swim/id426826309'
+        : 'https://play.google.com/store/apps/details?id=com.strava';
+      
+      await Linking.openURL(storeUrl);
+    }
+  } catch (error) {
+    console.error('Error when open strava, go back to web mode:', error);
+    await Linking.openURL('https://www.strava.com');
+  }
+};
 
   const handleMarkerPress = async (segmentId: number) => {
     if (selectedSegmentId === segmentId) {
@@ -79,9 +100,19 @@ export default function Index() {
   return (
      <View className="container-main">
       {segments.length === 0 ? (
-        <View className="card">
-          <Text className="text-body">No favorites segmentts found</Text>
-        </View>
+          <View className="flex-1 items-center justify-center px-6">
+          <Text className="text-caption-big text-center mb-6" style={{ marginBottom: 10}}>
+            No ride segments found
+          </Text>
+          <TouchableOpacity 
+            className="btn-primary items-center justify-center px-8 py-4" 
+            onPress={openStrava}
+          >
+            <Text className="text-white text-center font-medium">
+              🚀 Let&apos;s add it on Strava
+            </Text>
+          </TouchableOpacity>
+  </View>
       ) : (
         <View className="flex-1">
           {/* Section scrollable (header + stats) */}

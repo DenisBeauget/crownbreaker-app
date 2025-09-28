@@ -242,7 +242,7 @@ export default function RoutePreviewScreen({
                   <View className="flex-1 items-center">
                     <View className="flex-row items-center mb-1">
                       <MaterialCommunityIcons name="map-marker-distance" size={16} color="#FC4C02" />
-                      <Text className="text-2xl font-bold text-primary ml-1">
+                      <Text className="text-2xl font-bold text-primary ml-1" style={{color: 'black'}}>
                         {Math.round(route.totalDistance / 1000)}
                       </Text>
                     </View>
@@ -252,7 +252,7 @@ export default function RoutePreviewScreen({
                   <View className="flex-1 items-center">
                     <View className="flex-row items-center mb-1">
                       <MaterialCommunityIcons name="clock-outline" size={16} color="#FC4C02" />
-                      <Text className="text-2xl font-bold text-primary ml-1">
+                      <Text className="text-2xl font-bold text-primary ml-1" style={{color: 'black'}}>
                         {Math.round(route.totalDuration / 60)}
                       </Text>
                     </View>
@@ -262,7 +262,7 @@ export default function RoutePreviewScreen({
                   <View className="flex-1 items-center">
                     <View className="flex-row items-center mb-1">
                       <MaterialCommunityIcons name="flag-checkered" size={16} color="#FC4C02" />
-                      <Text className="text-2xl font-bold text-primary ml-1">
+                      <Text className="text-2xl font-bold text-primary ml-1" style={{color: 'black'}}>
                         {route.segments.length}
                       </Text>
                     </View>
