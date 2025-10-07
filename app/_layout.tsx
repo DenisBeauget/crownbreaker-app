@@ -4,8 +4,8 @@ import { StatusBar } from 'expo-status-bar';
 import React from "react";
 import { useColorScheme } from "react-native";
 import 'react-native-reanimated';
-import { AuthProvider } from './contexts/AuthContext';
-import { SegmentsProvider } from './contexts/SegmentsContext';
+import { AuthProvider } from '../contexts/AuthContext';
+import { SegmentsProvider } from '../contexts/SegmentsContext';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

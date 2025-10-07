@@ -1,9 +1,21 @@
 import { Redirect } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
-import { useAuth } from './contexts/AuthContext';
+import { ActivityIndicator, Alert, LogBox, View } from 'react-native';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Index() {
+
+
+
+LogBox.ignoreAllLogs(false);
+
+
+const originalConsoleError = console.error;
+console.error = (...args) => {
+  Alert.alert('ERROR', JSON.stringify(args));
+  originalConsoleError(...args);
+};
+
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {

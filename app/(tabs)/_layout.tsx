@@ -37,7 +37,7 @@ export default function TabLayout() {
         },
         headerLeft: () => (
           <View style={{ marginLeft: 15, marginRight: 70}}>
-            <MaterialCommunityIcons name="crown-outline" size={32} color="black" />
+            <MaterialCommunityIcons name="crown-outline" size={32} color="#FCD662" />
           </View>
         ),
          headerRight: () =>
@@ -57,12 +57,15 @@ export default function TabLayout() {
               <MaterialCommunityIcons name="account-circle" size={32} color="black" />
             </View>
           ),
-        tabBarStyle: Platform.select({
+        tabBarStyle:{ 
+          ...Platform.select({
           ios: {
             position: 'absolute',
           }
         
         }),
+      
+      }
       }}>
       <Tabs.Screen
         name="index"

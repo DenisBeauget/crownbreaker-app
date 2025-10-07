@@ -1,14 +1,13 @@
 import { default as komOptimizer } from "@/api/komOptimizer";
 import "@/global.css";
 import { decodePolyline } from '@/utils/polyline';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 import React, { useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Linking, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker, Polyline } from "react-native-maps";
-import { useSegmentsContext } from "../contexts/SegmentsContext";
+import { useSegmentsContext } from "../../contexts/SegmentsContext";
 
 export default function Index() {
   const { segments, loading, error, refetch } = useSegmentsContext();
@@ -17,6 +16,27 @@ export default function Index() {
   const [segmentDetails, setSegmentDetails] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
   const router = useRouter();
+
+
+  const openStrava = async () => {
+  try {
+    const stravaUrl = 'strava://';
+    const supported = await Linking.canOpenURL(stravaUrl);
+    
+    if (supported) {
+      await Linking.openURL(stravaUrl);
+    } else {
+      const storeUrl = Platform.OS === 'ios' 
+        ? 'https://apps.apple.com/app/strava-run-ride-swim/id426826309'
+        : 'https://play.google.com/store/apps/details?id=com.strava';
+      
+      await Linking.openURL(storeUrl);
+    }
+  } catch (error) {
+    console.error('Error when open strava, go back to web mode:', error);
+    await Linking.openURL('https://www.strava.com');
+  }
+};
 
   const handleMarkerPress = async (segmentId: number) => {
     if (selectedSegmentId === segmentId) {
@@ -80,9 +100,19 @@ export default function Index() {
   return (
      <View className="container-main">
       {segments.length === 0 ? (
-        <View className="card">
-          <Text className="text-body">No favorites segmentts found</Text>
-        </View>
+          <View className="flex-1 items-center justify-center px-6">
+          <Text className="text-caption-big text-center mb-6" style={{ marginBottom: 10}}>
+            No ride segments found
+          </Text>
+          <TouchableOpacity 
+            className="btn-primary items-center justify-center px-8 py-4" 
+            onPress={openStrava}
+          >
+            <Text className="text-white text-center font-medium">
+              🚀 Let&apos;s add it on Strava
+            </Text>
+          </TouchableOpacity>
+  </View>
       ) : (
         <View className="flex-1">
           {/* Section scrollable (header + stats) */}
@@ -98,15 +128,14 @@ export default function Index() {
             }
           >
             {/* Header principal */}
-            <View className="mb-2">
-              <Text className="text-heading mb-2">Your Starred Segments</Text>
-              <Text className="text-caption text-center">
+            <View className="mb-4">
+              <Text className="text-caption-big text-center"  style={{ textAlign: 'center', width: '100%', marginBottom: 10}}>
                 Discover all your favorite challenges
               </Text>
             </View>
 
             {/* Stats cards en ligne */}
-            <View className="flex-row mb-1 mt-4 gap-5 px-1">
+            <View className="flex-row gap-5 px-1">
               <View className="card-elevated flex-1 items-center justify-center mr-3">
                 <MaterialIcons name="numbers" size={24} color="#e3360b" />
                 <Text className="text-subheading text-center text-primary">
@@ -139,15 +168,13 @@ export default function Index() {
           
           {/* Google Maps - Section fixe */}
           <View className="mb-4">
-            <View className="flex-row items-center mb-4 px-4">
-              <FontAwesome name="map-signs" size={18} color="black" className="mr-3 ml-3" />
-              <Text className="text-subheading">Map View</Text>
+            <View className="flex-row items-center mb-2 px-4">
               {loadingSegment && (
                 <ActivityIndicator size="small" color="#FC4C02" className="ml-2" />
               )}
             </View>
             
-            <View className="card mx-4" style={{ height: 300, overflow: 'hidden', borderRadius: 12 }}>
+            <View className="card" style={{ height: 350, overflow: 'hidden', borderRadius: 12, marginBottom: 12 }}>
               <MapView
                 style={{ flex: 1 }}
                 initialRegion={{
@@ -201,14 +228,13 @@ export default function Index() {
             </View>
           </View>
 
-          {/* Explore button - Section fixe */}
-          <View className="flex-row gap-2 mb-4 px-4">
-            <TouchableOpacity className="btn-primary flex-1" onPress={() => router.replace('/explore')}>
-              <Text className="text-white text-center font-medium">
-                🚀 Let&apos;s plan a ride
-              </Text>
-            </TouchableOpacity>
-          </View>
+
+
+              <TouchableOpacity className="btn-primary items-center justify-center" onPress={() => router.replace('/explore')}>
+                <Text className="text-white text-center font-medium">
+                  🚀 Let&apos;s plan a ride
+                </Text>
+              </TouchableOpacity>
         </View>
       )}
     </View>

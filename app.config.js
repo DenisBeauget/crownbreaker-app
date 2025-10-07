@@ -14,7 +14,7 @@ export default {
     icon: "./assets/images/icon.png",
     scheme: "crownbreaker",
     userInterfaceStyle: "automatic",
-    newArchEnabled: true,
+    newArchEnabled: false,
 
     ios: {
       bundleIdentifier: "com.optimizer.crownbreaker",
@@ -30,7 +30,6 @@ export default {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff",
       },
-      edgeToEdgeEnabled: true,
       config: {
         googleMaps: {
           apiKey: process.env.GOOGLE_API_KEY, 
@@ -59,13 +58,6 @@ export default {
           backgroundColor: "#ffffff",
         },
       ],
-      [
-        "expo-location",
-        {
-          locationAlwaysAndWhenInUsePermission: "Allow CrownBreaker to access your location for mapping segments and routes.",
-          locationWhenInUsePermission: "Allow CrownBreaker to access your location for mapping segments and routes."
-        }
-      ]
     ],
 
     experiments: {

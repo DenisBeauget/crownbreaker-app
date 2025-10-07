@@ -5,7 +5,7 @@ import { router } from 'expo-router';
 import { openAuthSessionAsync } from 'expo-web-browser';
 import React, { useEffect } from 'react';
 import { Alert, Linking, Text, TouchableOpacity, View } from 'react-native';
-import { useAuth } from './contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const API_BASE_URL = "https://kom-optimizer-production.up.railway.app";
 
@@ -24,7 +24,6 @@ const useStravaAuth = () => {
 
         if (error) {
           setIsAuthenticating(false);
-          Alert.alert('Authentication Error', error);
         } else if (success === 'true' && token) {
           setIsAuthenticating(false);
           const user = userStr ? JSON.parse(decodeURIComponent(userStr)) : null;
@@ -69,13 +68,9 @@ async function authenticateWithStrava() {
     const result = await openAuthSessionAsync(authUrl, redirectUri);
 
     if (result.type === "success" && result.url) {
-      console.log("Redirect URL:", result.url);
 
-      const params = new URLSearchParams(result.url.split("?")[1]);
-      const token = params.get("token");
-      const user = JSON.parse(params.get("user") || "{}");
+      console.log('Successfully log in');
 
-      console.log("JWT:", token, "User:", user);
     } else {
       console.log("Auth cancelled or error:", result);
     }

@@ -1,6 +1,7 @@
 import komOptimizer from '@/api/komOptimizer';
 import { StravaSegment } from '@/types/types';
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { useAuth } from './AuthContext';
 
 interface SegmentsContextValue {
   segments: StravaSegment[];
@@ -13,8 +14,9 @@ const SegmentsContext = createContext<SegmentsContextValue | undefined>(undefine
 
 export const SegmentsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [segments, setSegments] = useState<StravaSegment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
 
   const loadSegments = async () => {
     try {
@@ -30,8 +32,10 @@ export const SegmentsProvider: React.FC<{ children: ReactNode }> = ({ children }
   };
 
   useEffect(() => {
-    loadSegments();
-  }, []);
+    if (isAuthenticated && !authLoading) {
+      loadSegments();
+    }
+  }, [isAuthenticated, authLoading]);
 
   return (
     <SegmentsContext.Provider value={{ segments, loading, error, refetch: loadSegments }}>
